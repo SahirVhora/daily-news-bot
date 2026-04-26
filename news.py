@@ -32,33 +32,28 @@ def main():
 
     today = date.today().strftime("%A, %d %B %Y")
 
-    lines = [f"<b>Daily News — {today}</b>\n"]
-
-    # UK News
-    lines.append("<b>🇬🇧 Top 10 UK News</b>\n")
+    # UK message
+    uk_lines = [f"<b>🇬🇧 Top 10 UK News — {today}</b>\n"]
     for i, (title, summary, link) in enumerate(uk_stories, 1):
-        lines.append(f"<b>{i}. {title}</b>")
+        uk_lines.append(f"<b>{i}. {title}</b>")
         if summary:
-            lines.append(summary)
+            uk_lines.append(summary)
         if link:
-            lines.append(f'<a href="{link}">Read more</a>')
-        lines.append("")
+            uk_lines.append(f'<a href="{link}">Read more</a>')
+        uk_lines.append("")
+    send_telegram("\n".join(uk_lines).strip(), token, chat_id)
 
-    lines.append("─" * 20)
-    lines.append("")
-
-    # India News
-    lines.append("<b>🇮🇳 Top 10 India News</b>\n")
+    # India message
+    india_lines = [f"<b>🇮🇳 Top 10 India News — {today}</b>\n"]
     for i, (title, summary, link) in enumerate(india_stories, 1):
-        lines.append(f"<b>{i}. {title}</b>")
+        india_lines.append(f"<b>{i}. {title}</b>")
         if summary:
-            lines.append(summary)
+            india_lines.append(summary)
         if link:
-            lines.append(f'<a href="{link}">Read more</a>')
-        lines.append("")
+            india_lines.append(f'<a href="{link}">Read more</a>')
+        india_lines.append("")
+    send_telegram("\n".join(india_lines).strip(), token, chat_id)
 
-    message = "\n".join(lines).strip()
-    send_telegram(message, token, chat_id)
     print("Sent successfully.")
 
 if __name__ == "__main__":
