@@ -1,0 +1,26 @@
+name: Daily SAP News
+
+on:
+  schedule:
+    - cron: "35 6 * * *"   # 6:35 UTC = 7:35 AM BST (UTC+1), 10 min after main news
+  workflow_dispatch:
+
+jobs:
+  send-sap-news:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Send SAP news to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python sap_news.py
