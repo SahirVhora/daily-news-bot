@@ -9,7 +9,8 @@ def fetch_bbc_news():
     for entry in feed.entries[:10]:
         title = entry.get("title", "")
         summary = entry.get("summary", "")
-        stories.append((title, summary))
+        link = entry.get("link", "")
+        stories.append((title, summary, link))
     return stories
 
 def send_telegram(message, token, chat_id):
@@ -30,10 +31,12 @@ def main():
     today = date.today().strftime("%A, %d %B %Y")
 
     lines = [f"<b>Top 10 News — {today}</b>\n"]
-    for i, (title, summary) in enumerate(stories, 1):
+    for i, (title, summary, link) in enumerate(stories, 1):
         lines.append(f"<b>{i}. {title}</b>")
         if summary:
             lines.append(summary)
+        if link:
+            lines.append(f'<a href="{link}">Read more</a>')
         lines.append("")
 
     message = "\n".join(lines).strip()
