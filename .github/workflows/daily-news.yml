@@ -1,0 +1,26 @@
+name: Daily Top 10 News
+
+on:
+  schedule:
+    - cron: "25 6 * * *"   # 6:25 UTC = 7:25 AM BST (UTC+1)
+  workflow_dispatch:         # allow manual trigger
+
+jobs:
+  send-news:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Send news to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python news.py
