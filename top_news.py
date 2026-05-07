@@ -7,6 +7,7 @@ Designed to run via GitHub Actions on a schedule.
 import feedparser
 import requests
 import os
+import html
 from datetime import date
 
 
@@ -24,7 +25,7 @@ def fetch_feed(url, limit=5):
         feed = feedparser.parse(url)
         stories = []
         for entry in feed.entries[:limit]:
-            title = entry.get("title", "").strip()
+            title = html.escape(entry.get("title", "").strip())
             link = entry.get("link", "").strip()
             stories.append((title, link))
         return stories
