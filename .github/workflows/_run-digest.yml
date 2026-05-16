@@ -1,0 +1,41 @@
+name: Run Digest Workflow
+
+on:
+  workflow_call:
+    inputs:
+      digest_name:
+        required: true
+        type: string
+      script_path:
+        required: true
+        type: string
+      python_version:
+        required: false
+        type: string
+        default: "3.11"
+      install_command:
+        required: false
+        type: string
+        default: "pip install -r requirements.txt"
+
+jobs:
+  run-digest:
+    name: ${{ inputs.digest_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python_version }}
+
+      - name: Install dependencies
+        run: ${{ inputs.install_command }}
+
+      - name: Run digest script
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python ${{ inputs.script_path }}

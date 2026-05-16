@@ -8,22 +8,9 @@ on:
 
 jobs:
   send-news:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: pip install feedparser requests
-
-      - name: Send daily top news to Telegram
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python top_news.py
+    uses: ./.github/workflows/_run-digest.yml
+    secrets: inherit
+    with:
+      digest_name: "Daily Top News"
+      script_path: "top_news.py"
+      install_command: "pip install feedparser requests"

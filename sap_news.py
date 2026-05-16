@@ -1,7 +1,8 @@
 import feedparser
-import requests
 import os
 from datetime import date
+
+from digest_common import get_telegram_config, print_dry_run, send_telegram
 
 SAP_FEEDS = [
     ("SAP News", "https://news.sap.com/feed/"),
@@ -36,19 +37,10 @@ def fetch_sap_news(limit=10):
             continue
     return stories[:limit]
 
-def send_telegram(message, token, chat_id):
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    payload = {
-        "chat_id": chat_id,
-        "text": message,
-        "parse_mode": "HTML"
-    }
-    r = requests.post(url, json=payload)
-    r.raise_for_status()
-
-def main():
-    token = os.environ["TELEGRAM_BOT_TOKEN"]
-    chat_id = os.environ["TELEGRAM_CHAT_ID"]
+def main(dry_run=False):
+    if dry_run:
+        print("[DRY RUN] Would fetch news and send to Telegram\n")
+    token, chat_id = get_telegram_config()
 
     stories = fetch_sap_news()
     today = date.today().strftime("%A, %d %B %Y")
@@ -67,8 +59,18 @@ def main():
                 lines.append(f'<a href="{link}">Read more</a>')
             lines.append("")
 
-    send_telegram("\n".join(lines).strip(), token, chat_id)
+    message = "\n".join(lines).strip()
+
+    if dry_run:
+        print_dry_run(message, f"Would send {len(stories)} SAP stories to Telegram")
+        return
+
+    send_telegram(message, token, chat_id)
     print("Sent successfully.")
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    p = argparse.ArgumentParser(description="Fetch SAP/SuccessFactors news and send to Telegram")
+    p.add_argument("--dry-run", action="store_true", help="Print to stdout instead of sending")
+    args = p.parse_args()
+    main(dry_run=args.dry_run)

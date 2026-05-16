@@ -11,7 +11,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import date
 
-import requests
+from digest_common import get_telegram_config, print_dry_run, send_telegram
 
 FEEDS = [
     ("UK Trends", "https://trends.google.com/trending/rss?geo=GB", "🇬🇧"),
@@ -42,22 +42,8 @@ def fetch_trends(url, limit=10):
         print(f"Error fetching {url}: {e}")
         return []
 
-
-def send_telegram(message, token, chat_id):
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    payload = {
-        "chat_id": chat_id,
-        "text": message,
-        "parse_mode": "HTML",
-        "disable_web_page_preview": True,
-    }
-    r = requests.post(url, json=payload, timeout=15)
-    r.raise_for_status()
-
-
-def main():
-    token = os.environ["TELEGRAM_BOT_TOKEN"]
-    chat_id = os.environ["TELEGRAM_CHAT_ID"]
+def main(dry_run=False):
+    token, chat_id = get_telegram_config()
     today = date.today().strftime("%A, %d %B %Y")
 
     lines = [f"<b>🔥 Daily Trending Topics - {today}</b>\n"]
@@ -80,13 +66,18 @@ def main():
 
     message = "\n".join(lines)
 
-    # Telegram has a 4096 char limit
-    if len(message) > 4000:
-        message = message[:3990] + "\n..."
+    if dry_run:
+        total = sum(1 for line in lines if line.startswith(tuple(str(i) for i in range(1, 10))) or line.startswith("10."))
+        print_dry_run(message, f"Would send approximately {total} trends to Telegram")
+        return
 
     send_telegram(message, token, chat_id)
     print("Sent X trends digest to Telegram.")
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    p = argparse.ArgumentParser(description="Fetch trending topics and send to Telegram")
+    p.add_argument("--dry-run", action="store_true", help="Print to stdout instead of sending")
+    args = p.parse_args()
+    main(dry_run=args.dry_run)

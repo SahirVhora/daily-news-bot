@@ -1,7 +1,8 @@
 import feedparser
-import requests
 import os
 from datetime import date, datetime, timezone, timedelta
+
+from digest_common import get_telegram_config, print_dry_run, send_telegram
 
 FEEDS = [
     ("The Verge AI",        "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"),
@@ -25,7 +26,6 @@ def fetch_recent(feed_url, source_name, limit=4):
     stories = []
 
     for entry in feed.entries[:20]:
-        # try to parse published date
         published = None
         for attr in ("published_parsed", "updated_parsed"):
             t = getattr(entry, attr, None)
@@ -50,22 +50,10 @@ def fetch_recent(feed_url, source_name, limit=4):
 
     return stories
 
-
-def send_telegram(message, token, chat_id):
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    payload = {
-        "chat_id": chat_id,
-        "text": message,
-        "parse_mode": "HTML",
-        "disable_web_page_preview": True,
-    }
-    r = requests.post(url, json=payload, timeout=15)
-    r.raise_for_status()
-
-
-def main():
-    token   = os.environ["TELEGRAM_BOT_TOKEN"]
-    chat_id = os.environ["TELEGRAM_CHAT_ID"]
+def main(dry_run=False):
+    if dry_run:
+        print("[DRY RUN] Would fetch news and send to Telegram\n")
+    token, chat_id = get_telegram_config()
     today   = date.today().strftime("%A, %d %B %Y")
 
     lines = [f"<b>🤖 AI News Digest - {today}</b>\n"]
@@ -89,13 +77,17 @@ def main():
 
     message = "\n".join(lines).strip()
 
-    # Telegram max message length is 4096 chars
-    if len(message) > 4000:
-        message = message[:4000] + "\n\n<i>…truncated</i>"
+    if dry_run:
+        print_dry_run(message, f"Would send {total} stories to Telegram")
+        return
 
     send_telegram(message, token, chat_id)
     print(f"Sent {total} stories.")
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    p = argparse.ArgumentParser(description="Fetch AI/ML news from RSS feeds and send to Telegram")
+    p.add_argument("--dry-run", action="store_true", help="Print to stdout instead of sending")
+    args = p.parse_args()
+    main(dry_run=args.dry_run)

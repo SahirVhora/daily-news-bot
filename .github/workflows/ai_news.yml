@@ -7,20 +7,8 @@ on:
 
 jobs:
   send-ai-news:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Send AI news to Telegram
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python ai_news.py
+    uses: ./.github/workflows/_run-digest.yml
+    secrets: inherit
+    with:
+      digest_name: "Daily AI News"
+      script_path: "ai_news.py"
