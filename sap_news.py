@@ -53,7 +53,7 @@ def main():
     stories = fetch_sap_news()
     today = date.today().strftime("%A, %d %B %Y")
 
-    lines = [f"<b>🔵 SAP / SuccessFactors News — {today}</b>\n"]
+    lines = [f"<b>🔵 SAP / SuccessFactors News - {today}</b>\n"]
 
     if not stories:
         lines.append("No SAP news found today.")

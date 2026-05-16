@@ -1,7 +1,7 @@
 """
-x_trends.py — Fetches trending topics via Google Trends RSS (UK + Worldwide)
+x_trends.py - Fetches trending topics via Google Trends RSS (UK + Worldwide)
 and sends a daily digest to Telegram.
-Uses only stdlib + requests — no external feedparser needed.
+Uses only stdlib + requests - no external feedparser needed.
 Runs via GitHub Actions on a schedule.
 """
 
@@ -60,7 +60,7 @@ def main():
     chat_id = os.environ["TELEGRAM_CHAT_ID"]
     today = date.today().strftime("%A, %d %B %Y")
 
-    lines = [f"<b>🔥 Daily Trending Topics — {today}</b>\n"]
+    lines = [f"<b>🔥 Daily Trending Topics - {today}</b>\n"]
 
     for section, url, emoji in FEEDS:
         trends = fetch_trends(url, limit=10)

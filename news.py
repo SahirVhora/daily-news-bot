@@ -33,7 +33,7 @@ def main():
     today = date.today().strftime("%A, %d %B %Y")
 
     # UK message
-    uk_lines = [f"<b>🇬🇧 Top 10 UK News — {today}</b>\n"]
+    uk_lines = [f"<b>🇬🇧 Top 10 UK News - {today}</b>\n"]
     for i, (title, summary, link) in enumerate(uk_stories, 1):
         uk_lines.append(f"<b>{i}. {title}</b>")
         if summary:
@@ -44,7 +44,7 @@ def main():
     send_telegram("\n".join(uk_lines).strip(), token, chat_id)
 
     # India message
-    india_lines = [f"<b>🇮🇳 Top 10 India News — {today}</b>\n"]
+    india_lines = [f"<b>🇮🇳 Top 10 India News - {today}</b>\n"]
     for i, (title, summary, link) in enumerate(india_stories, 1):
         india_lines.append(f"<b>{i}. {title}</b>")
         if summary:

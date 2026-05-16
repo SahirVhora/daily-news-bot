@@ -1,5 +1,5 @@
 """
-top_news.py — Fetches top global news headlines via BBC, Reuters, AP RSS feeds
+top_news.py - Fetches top global news headlines via BBC, Reuters, AP RSS feeds
 and sends a daily digest to Telegram.
 Designed to run via GitHub Actions on a schedule.
 """
@@ -50,7 +50,7 @@ def main():
     chat_id = os.environ["TELEGRAM_CHAT_ID"]
     today = date.today().strftime("%A, %d %B %Y")
 
-    lines = [f"<b>📰 Daily Top News — {today}</b>\n"]
+    lines = [f"<b>📰 Daily Top News - {today}</b>\n"]
 
     for section, url, emoji in FEEDS:
         stories = fetch_feed(url, limit=5)
@@ -67,7 +67,7 @@ def main():
 
     message = "\n".join(lines)
 
-    # Telegram has a 4096 char limit per message — truncate safely
+    # Telegram has a 4096 char limit per message - truncate safely
     if len(message) > 4000:
         message = message[:3990] + "\n..."
 

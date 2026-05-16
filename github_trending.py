@@ -92,7 +92,7 @@ def main():
     repos = fetch_github_trending()
     today = date.today().strftime("%A, %d %B %Y")
 
-    lines = [f"<b>🔥 Top 10 Trending GitHub Repos — {today}</b>\n"]
+    lines = [f"<b>🔥 Top 10 Trending GitHub Repos - {today}</b>\n"]
 
     if not repos:
         lines.append("Could not fetch trending repos today.")

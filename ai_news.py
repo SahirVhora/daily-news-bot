@@ -68,14 +68,14 @@ def main():
     chat_id = os.environ["TELEGRAM_CHAT_ID"]
     today   = date.today().strftime("%A, %d %B %Y")
 
-    lines = [f"<b>🤖 AI News Digest — {today}</b>\n"]
+    lines = [f"<b>🤖 AI News Digest - {today}</b>\n"]
 
     total = 0
     for source_name, feed_url in FEEDS:
         stories = fetch_recent(feed_url, source_name)
         if not stories:
             continue
-        lines.append(f"<b>— {source_name} —</b>")
+        lines.append(f"<b> - {source_name} - </b>")
         for title, link in stories:
             if link:
                 lines.append(f'• <a href="{link}">{title}</a>')

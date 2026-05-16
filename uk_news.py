@@ -29,7 +29,7 @@ def main():
     today = date.today().strftime("%A, %d %B %Y")
 
     stories = fetch_news("http://feeds.bbci.co.uk/news/rss.xml")
-    lines = [f"<b>🇬🇧 Top 10 UK News — {today}</b>\n"]
+    lines = [f"<b>🇬🇧 Top 10 UK News - {today}</b>\n"]
     for i, (title, summary, link) in enumerate(stories, 1):
         lines.append(f"<b>{i}. {title}</b>")
         if summary:

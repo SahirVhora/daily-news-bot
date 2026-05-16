@@ -23,8 +23,8 @@ pip install -r requirements.txt
 ```
 
 Set environment variables:
-- `TELEGRAM_BOT_TOKEN` — your Telegram bot token
-- `TELEGRAM_CHAT_ID` — target chat/channel ID
+- `TELEGRAM_BOT_TOKEN` - your Telegram bot token
+- `TELEGRAM_CHAT_ID` - target chat/channel ID
 
 ## Usage
 
