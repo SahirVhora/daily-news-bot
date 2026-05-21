@@ -14,7 +14,14 @@ Multi-source news digest delivered to Telegram via GitHub Actions. Covers UK new
 | `sap_news.py` | SAP + Google News | SAP SuccessFactors & HR transformation |
 | `github_trending.py` | GitHub Trending | Top 10 trending repos daily |
 | `india_news.py` | NDTV RSS | India-specific top stories |
+| `x_trends.py` | Google Trends RSS | UK & Worldwide trending topics |
 | `metal_alert.py` | Yahoo Finance | Gold & Silver prices in GBP (hourly) |
+
+## Shared Modules
+
+| Module | Purpose | Details |
+|--------|---------|---------|
+| `digest_common.py` | Shared utilities | Telegram config, message splitting, send helper, dry-run printer |
 
 ## Setup
 
