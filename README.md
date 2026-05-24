@@ -43,4 +43,6 @@ python3 metal_alert.py
 
 ## Automation
 
-Runs on GitHub Actions schedule. See `.github/workflows/` for cron configuration.
+Runs on GitHub Actions schedule. See `.github/workflows/` for cron configuration (8 workflows share a common `_run-digest.yml` reusable workflow).
+
+This repo feeds into the [daily-research-digest](https://github.com/SahirVhora/daily-research-digest) merger for consolidated daily briefings.
