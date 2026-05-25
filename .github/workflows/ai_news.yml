@@ -8,7 +8,9 @@ on:
 jobs:
   send-ai-news:
     uses: ./.github/workflows/_run-digest.yml
-    secrets: inherit
+    secrets:
+      telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
     with:
       digest_name: "Daily AI News"
       script_path: "ai_news.py"

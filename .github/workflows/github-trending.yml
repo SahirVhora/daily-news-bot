@@ -8,7 +8,9 @@ on:
 jobs:
   send-github-trending:
     uses: ./.github/workflows/_run-digest.yml
-    secrets: inherit
+    secrets:
+      telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
     with:
       digest_name: "Daily GitHub Trending"
       script_path: "github_trending.py"

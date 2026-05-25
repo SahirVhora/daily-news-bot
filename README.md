@@ -33,6 +33,11 @@ Set environment variables:
 - `TELEGRAM_BOT_TOKEN` - your Telegram bot token
 - `TELEGRAM_CHAT_ID` - target chat/channel ID
 
+GitHub Actions routing uses category-specific bot token secrets:
+- `ACCIO_BOT_TOKEN` - UK, India, Top News
+- `ALWAYSNEWS_BOT_TOKEN` - SAP, AI, GitHub Trending, X/Twitter Trends
+- `TELEGRAM_CHAT_ID` - target Telegram chat/channel ID
+
 ## Usage
 
 ```bash
