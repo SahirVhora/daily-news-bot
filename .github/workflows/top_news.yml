@@ -15,4 +15,4 @@ jobs:
     with:
       digest_name: "Daily Top News"
       script_path: "top_news.py"
-      install_command: "pip install feedparser requests"
+      install_command: "pip install -r requirements.txt"
