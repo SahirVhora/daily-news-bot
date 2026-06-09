@@ -1,0 +1,98 @@
+name: Daily News Digests
+
+on:
+  schedule:
+    - cron: '15 6 * * *'  # UK News
+    - cron: '25 6 * * *'  # India News
+    - cron: '35 6 * * *'  # SAP News
+    - cron: '45 6 * * *'  # GitHub Trending + X Trends
+    - cron: '0 7 * * *'   # Top News
+    - cron: '10 7 * * *'  # AI News
+  workflow_dispatch:
+    inputs:
+      digest:
+        description: 'Which digest to run'
+        required: true
+        type: choice
+        options:
+          - uk_news
+          - india_news
+          - sap_news
+          - github_trending
+          - x_trends
+          - top_news
+          - ai_news
+
+permissions:
+  contents: read
+
+jobs:
+  uk_news:
+    if: (github.event_name == 'schedule' && github.event.schedule == '15 6 * * *') || (github.event_name == 'workflow_dispatch' && inputs.digest == 'uk_news')
+    uses: ./.github/workflows/_run-digest.yml
+    with:
+      digest_name: 'Daily UK News'
+      script_path: 'uk_news.py'
+    secrets:
+      telegram_bot_token: ${{ secrets.ACCIO_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+  india_news:
+    if: (github.event_name == 'schedule' && github.event.schedule == '25 6 * * *') || (github.event_name == 'workflow_dispatch' && inputs.digest == 'india_news')
+    uses: ./.github/workflows/_run-digest.yml
+    with:
+      digest_name: 'Daily India News'
+      script_path: 'india_news.py'
+    secrets:
+      telegram_bot_token: ${{ secrets.ACCIO_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+  sap_news:
+    if: (github.event_name == 'schedule' && github.event.schedule == '35 6 * * *') || (github.event_name == 'workflow_dispatch' && inputs.digest == 'sap_news')
+    uses: ./.github/workflows/_run-digest.yml
+    with:
+      digest_name: 'Daily SAP News'
+      script_path: 'sap_news.py'
+    secrets:
+      telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+  github_trending:
+    if: (github.event_name == 'schedule' && github.event.schedule == '45 6 * * *') || (github.event_name == 'workflow_dispatch' && inputs.digest == 'github_trending')
+    uses: ./.github/workflows/_run-digest.yml
+    with:
+      digest_name: 'Daily GitHub Trending'
+      script_path: 'github_trending.py'
+    secrets:
+      telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+  x_trends:
+    if: (github.event_name == 'schedule' && github.event.schedule == '45 6 * * *') || (github.event_name == 'workflow_dispatch' && inputs.digest == 'x_trends')
+    uses: ./.github/workflows/_run-digest.yml
+    with:
+      digest_name: 'Daily X/Twitter Trends'
+      script_path: 'x_trends.py'
+    secrets:
+      telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+  top_news:
+    if: (github.event_name == 'schedule' && github.event.schedule == '0 7 * * *') || (github.event_name == 'workflow_dispatch' && inputs.digest == 'top_news')
+    uses: ./.github/workflows/_run-digest.yml
+    with:
+      digest_name: 'Daily Top News'
+      script_path: 'top_news.py'
+    secrets:
+      telegram_bot_token: ${{ secrets.ACCIO_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+  ai_news:
+    if: (github.event_name == 'schedule' && github.event.schedule == '10 7 * * *') || (github.event_name == 'workflow_dispatch' && inputs.digest == 'ai_news')
+    uses: ./.github/workflows/_run-digest.yml
+    with:
+      digest_name: 'Daily AI News'
+      script_path: 'ai_news.py'
+    secrets:
+      telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
