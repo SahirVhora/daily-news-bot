@@ -119,22 +119,20 @@ def compute_standings(matches):
 
 
 def format_standings(sorted_groups):
-    """Format group standings as clean text for Telegram."""
-    lines = ["\n<b>🏆 Group Standings</b>\n"]
+    """Format group standings as clean text for Telegram using <pre> monospace."""
+    header_lines = ["\n<b>🏆 Group Standings</b>"]
     for g in sorted(sorted_groups.keys()):
         teams = sorted_groups[g]
         if not teams:
             continue
-        lines.append(f"\n<b>{g}</b>")
-        lines.append("   Team                    P  W  D  L  GF  GA  GD Pts")
+        header_lines.append(f"\n<b>{g}</b>")
+        # Build the monospace table inside <pre>
+        table_rows = [f"{'Team':<22}  {'P':>2} {'W':>2} {'D':>2} {'L':>2} {'GF':>2} {'GA':>2} {'GD':>3} {'Pts':>2}"]
         for i, (team, stats) in enumerate(teams, 1):
-            team_display = team[:22].ljust(22)
-            lines.append(
-                f"{i}. {team_display} "
-                f"{stats['P']:2d} {stats['W']:2d} {stats['D']:2d} {stats['L']:2d} "
-                f"{stats['GF']:2d} {stats['GA']:2d} {stats['GD']:3d} {stats['Pts']:2d}"
-            )
-    return "\n".join(lines)
+            row = f"{i}. {team:<20}  {stats['P']:2d} {stats['W']:2d} {stats['D']:2d} {stats['L']:2d} {stats['GF']:2d} {stats['GA']:2d} {stats['GD']:3d} {stats['Pts']:2d}"
+            table_rows.append(row)
+        header_lines.append("<pre>" + "\n".join(table_rows) + "</pre>")
+    return "\n".join(header_lines)
 
 
 def format_yesterdays_results(matches, today):
@@ -167,15 +165,16 @@ def format_todays_fixtures(matches, today):
     if not today_matches:
         return "\n\n<b>⚽ Today's Fixtures</b>\nNo matches scheduled today."
 
-    lines = ["\n<b>⚽ Today's Fixtures (UK times)</b>\n"]
+    lines = ["\n<b>⚽ Today's Fixtures (UK times)</b>"]
     for m in today_matches:
         time_str = m.get("time", "")
         bst_time = convert_to_bst(time_str) if time_str else ""
         g = m.get("group", "")
         ground = m.get("ground", "")
         time_display = f"{bst_time} BST" if bst_time else "TBC"
-        lines.append(f"<b>{m['team1']} vs {m['team2']}</b>")
-        lines.append(f"   {time_display}  |  {g}  |  {ground}")
+        lines.append(f"\n<b>{m['team1']} vs {m['team2']}</b>")
+        lines.append(f"  ⏰ {time_display}  |  🏟️ {ground}")
+        lines.append(f"  📋 {g}")
 
     return "\n".join(lines)
 
