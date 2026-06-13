@@ -22,6 +22,7 @@ on:
           - x_trends
           - top_news
           - ai_news
+          - wc26_briefing
 
 permissions:
   contents: read
@@ -93,6 +94,16 @@ jobs:
     with:
       digest_name: 'Daily AI News'
       script_path: 'ai_news.py'
+    secrets:
+      telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+  wc26_briefing:
+    if: (github.event_name == 'schedule' && github.event.schedule == '0 6 * * *') || (github.event_name == 'workflow_dispatch' && inputs.digest == 'wc26_briefing')
+    uses: ./.github/workflows/_run-digest.yml
+    with:
+      digest_name: 'WC26 Morning Briefing'
+      script_path: 'wc26_briefing.py'
     secrets:
       telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
