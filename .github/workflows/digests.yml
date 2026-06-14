@@ -2,6 +2,7 @@ name: Daily News Digests
 
 on:
   schedule:
+    - cron: '0 6 * * *'   # WC26 Briefing
     - cron: '15 6 * * *'  # UK News
     - cron: '25 6 * * *'  # India News
     - cron: '35 6 * * *'  # SAP News
