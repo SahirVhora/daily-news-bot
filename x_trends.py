@@ -7,6 +7,7 @@ Runs via GitHub Actions on a schedule.
 
 import os
 import html
+import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import date
@@ -57,10 +58,9 @@ def main(dry_run=False):
         lines.append(f"\n<b>{emoji} {section}</b>")
         for i, (title, traffic, link) in enumerate(trends, 1):
             traffic_str = f" ({traffic})" if traffic else ""
-            if link:
-                lines.append(f'{i}. <a href="{link}">{title}</a>{traffic_str}')
-            else:
-                lines.append(f"{i}. {title}{traffic_str}")
+            # Replace XML feed link with proper Google Trends explore URL
+            trend_url = f"https://www.google.com/trends/explore?q={urllib.parse.quote(title)}"
+            lines.append(f'{i}. <a href="{trend_url}">{title}</a>{traffic_str}')
 
     lines.append("\n<i>Source: Google Trends RSS • Runs daily at 7:45 AM UTC</i>")
 
