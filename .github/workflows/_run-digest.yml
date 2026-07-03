@@ -22,6 +22,8 @@ on:
         required: true
       telegram_chat_id:
         required: true
+      github_pat:
+        required: false
 
 jobs:
   run-digest:
@@ -44,4 +46,5 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.telegram_bot_token }}
           TELEGRAM_CHAT_ID: ${{ secrets.telegram_chat_id }}
+          GH_TOKEN: ${{ secrets.github_pat || github.token }}
         run: python ${{ inputs.script_path }}

@@ -3,12 +3,14 @@ name: Daily News Digests
 on:
   schedule:
     - cron: '0 6 * * *'   # WC26 Briefing
+    - cron: '0 0 * * *'   # GitHub Triage
     - cron: '15 6 * * *'  # UK News
     - cron: '25 6 * * *'  # India News
     - cron: '35 6 * * *'  # SAP News
     - cron: '45 6 * * *'  # GitHub Trending + X Trends
     - cron: '0 7 * * *'   # Top News
     - cron: '10 7 * * *'  # AI News
+    - cron: '0 8 * * 0'   # Weekly Repo Health
   workflow_dispatch:
     inputs:
       digest:
@@ -24,6 +26,8 @@ on:
           - top_news
           - ai_news
           - wc26_briefing
+          - github_triage_digest
+          - github_health_digest
 
 permissions:
   contents: read
@@ -108,3 +112,25 @@ jobs:
     secrets:
       telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+  github_triage_digest:
+    if: (github.event_name == 'schedule' && github.event.schedule == '0 0 * * *') || (github.event_name == 'workflow_dispatch' && inputs.digest == 'github_triage_digest')
+    uses: ./.github/workflows/_run-digest.yml
+    with:
+      digest_name: 'Overnight GitHub Triage'
+      script_path: 'github_triage_digest.py'
+    secrets:
+      telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+      github_pat: ${{ secrets.GH_PAT }}
+
+  github_health_digest:
+    if: (github.event_name == 'schedule' && github.event.schedule == '0 8 * * 0') || (github.event_name == 'workflow_dispatch' && inputs.digest == 'github_health_digest')
+    uses: ./.github/workflows/_run-digest.yml
+    with:
+      digest_name: 'Weekly Repo Health Digest'
+      script_path: 'github_health_digest.py'
+    secrets:
+      telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
+      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+      github_pat: ${{ secrets.GH_PAT }}
