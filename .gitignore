@@ -13,3 +13,7 @@ build/
 *.db
 .coverage
 htmlcov/
+
+.audit-result.json
+.claude/settings.local.json
+.under-anything/
