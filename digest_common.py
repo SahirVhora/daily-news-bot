@@ -1,5 +1,4 @@
 import os
-from typing import Iterable
 
 import requests
 
@@ -13,25 +12,31 @@ def get_telegram_config() -> tuple[str, str]:
 
 
 def split_message(message: str, max_length: int = TELEGRAM_MAX_LENGTH) -> list[str]:
+    if max_length < 1:
+        raise ValueError("max_length must be positive")
     if len(message) <= max_length:
         return [message]
 
     parts: list[str] = []
-    current: list[str] = []
-    current_len = 0
+    current = ""
 
     for line in message.splitlines():
-        addition = len(line) + (1 if current else 0)
-        if current and current_len + addition > max_length:
-            parts.append("\n".join(current))
-            current = [line]
-            current_len = len(line)
-            continue
-        current.append(line)
-        current_len += addition
+        # Telegram rejects an oversized message even when it contains no newline.
+        # Hard-split pathological lines while retaining newline-aware boundaries for
+        # ordinary digest content.
+        chunks = [
+            line[i : i + max_length] for i in range(0, len(line), max_length)
+        ] or [""]
+        for chunk in chunks:
+            candidate = chunk if not current else f"{current}\n{chunk}"
+            if len(candidate) <= max_length:
+                current = candidate
+                continue
+            parts.append(current)
+            current = chunk
 
     if current:
-        parts.append("\n".join(current))
+        parts.append(current)
     return parts
 
 
@@ -61,4 +66,3 @@ def print_dry_run(message: str, *details: str) -> None:
     print(f"\n[DRY RUN] Message parts: {len(split_message(message))}")
     for detail in details:
         print(f"[DRY RUN] {detail}")
-

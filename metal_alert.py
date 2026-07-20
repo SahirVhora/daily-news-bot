@@ -16,14 +16,14 @@ import urllib.request
 import urllib.parse
 from datetime import datetime, timezone
 
-TELEGRAM_TOKEN   = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
-TROY_OZ_PER_G  = 1 / 31.1035   # g  in 1 troy oz
-TROY_OZ_PER_KG = 32.1507        # troy oz in 1 kg
+TROY_OZ_PER_G = 1 / 31.1035  # g  in 1 troy oz
+TROY_OZ_PER_KG = 32.1507  # troy oz in 1 kg
 
 SYMBOLS = {
-    "Gold":   "GC=F",
+    "Gold": "GC=F",
     "Silver": "SI=F",
 }
 
@@ -47,7 +47,7 @@ def fetch_price_data(symbol):
         payload = json.loads(resp.read().decode("utf-8"))
     result = payload["chart"]["result"][0]
     timestamps = result["timestamp"]
-    closes    = result["indicators"]["quote"][0]["close"]
+    closes = result["indicators"]["quote"][0]["close"]
     return timestamps, closes
 
 
@@ -74,16 +74,16 @@ def get_signal(pct):
 
 
 def build_alert():
-    now      = datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc)
     date_str = now.strftime("%A %d %B %Y, %H:%M UTC")
-    lines    = [f"🥇 *Metals Morning Alert*\n_{date_str}_\n"]
+    lines = [f"🥇 *Metals Morning Alert*\n_{date_str}_\n"]
 
     # Fetch GBP/USD rate first
     try:
         gbpusd = fetch_gbpusd()
         fx_line = f"_FX: £1 = ${gbpusd:.4f}_"
     except Exception as e:
-        gbpusd  = None
+        gbpusd = None
         fx_line = f"_FX: unavailable ({e})_"
 
     lines.append(fx_line + "\n")
@@ -101,57 +101,56 @@ def build_alert():
             usd_price = pairs[-1][1]
 
             # 24h change in USD
-            cutoff     = pairs[-1][0] - 86400
+            cutoff = pairs[-1][0] - 86400
             prev_pairs = [(t, c) for t, c in pairs if t <= cutoff]
-            prev_usd   = prev_pairs[-1][1] if prev_pairs else pairs[0][1]
+            prev_usd = prev_pairs[-1][1] if prev_pairs else pairs[0][1]
             change_usd = usd_price - prev_usd
-            pct        = (change_usd / prev_usd) * 100
-            signal     = get_signal(pct)
-            arrow      = "+" if change_usd >= 0 else ""
+            pct = (change_usd / prev_usd) * 100
+            signal = get_signal(pct)
+            arrow = "+" if change_usd >= 0 else ""
 
             # 7-day context
             week_cutoff = pairs[-1][0] - 7 * 86400
-            week_pairs  = [(t, c) for t, c in pairs if t <= week_cutoff]
-            week_line   = ""
+            week_pairs = [(t, c) for t, c in pairs if t <= week_cutoff]
+            week_line = ""
             if week_pairs:
-                week_pct   = ((usd_price - week_pairs[-1][1]) / week_pairs[-1][1]) * 100
+                week_pct = ((usd_price - week_pairs[-1][1]) / week_pairs[-1][1]) * 100
                 week_arrow = "+" if week_pct >= 0 else ""
-                week_line  = f"  7d: {week_arrow}{week_pct:.1f}%"
+                week_line = f"  7d: {week_arrow}{week_pct:.1f}%"
 
             # GBP conversion
             if gbpusd:
-                gbp_price      = usd_price / gbpusd
-                gbp_prev       = prev_usd / gbpusd
-                change_gbp     = gbp_price - gbp_prev
-                gbp_arrow      = "+" if change_gbp >= 0 else ""
+                gbp_price = usd_price / gbpusd
+                gbp_prev = prev_usd / gbpusd
+                change_gbp = gbp_price - gbp_prev
+                gbp_arrow = "+" if change_gbp >= 0 else ""
                 gbp_price_line = (
-                    f"  GBP: £{gbp_price:,.2f}  "
-                    f"({gbp_arrow}{change_gbp:+.2f})"
+                    f"  GBP: £{gbp_price:,.2f}  ({gbp_arrow}{change_gbp:+.2f})"
                 )
             else:
                 gbp_price_line = "  GBP: unavailable"
-                gbp_price      = None
+                gbp_price = None
 
             # Per-unit prices
             if metal == "Gold":
                 # 1 gram
                 usd_per_g = usd_price * TROY_OZ_PER_G
-                unit_usd  = f"${usd_per_g:.2f}/g"
+                unit_usd = f"${usd_per_g:.2f}/g"
                 if gbp_price:
                     gbp_per_g = gbp_price * TROY_OZ_PER_G
-                    unit_gbp  = f"£{gbp_per_g:.2f}/g"
+                    unit_gbp = f"£{gbp_per_g:.2f}/g"
                 else:
-                    unit_gbp  = ""
+                    unit_gbp = ""
                 unit_line = f"  1g: {unit_usd}  {unit_gbp}"
             else:
                 # 1 kg silver
                 usd_per_kg = usd_price * TROY_OZ_PER_KG
-                unit_usd   = f"${usd_per_kg:,.2f}/kg"
+                unit_usd = f"${usd_per_kg:,.2f}/kg"
                 if gbp_price:
                     gbp_per_kg = gbp_price * TROY_OZ_PER_KG
-                    unit_gbp   = f"£{gbp_per_kg:,.2f}/kg"
+                    unit_gbp = f"£{gbp_per_kg:,.2f}/kg"
                 else:
-                    unit_gbp   = ""
+                    unit_gbp = ""
                 unit_line = f"  1kg: {unit_usd}  {unit_gbp}"
 
             lines.append(
@@ -159,8 +158,7 @@ def build_alert():
                 f"  USD: ${usd_price:,.2f}  ({arrow}{change_usd:+.2f} | {arrow}{pct:.2f}%)\n"
                 f"{gbp_price_line}\n"
                 f"{unit_line}\n"
-                f"  Signal: {signal}"
-                + (f"\n{week_line}" if week_line else "")
+                f"  Signal: {signal}" + (f"\n{week_line}" if week_line else "")
             )
         except Exception as e:
             lines.append(f"*{metal}*: error fetching data - {e}")
@@ -175,14 +173,18 @@ def send_telegram(text):
         print("No credentials - output:\n")
         print(text)
         return
-    url     = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    payload = json.dumps({
-        "chat_id":                  TELEGRAM_CHAT_ID,
-        "text":                     text,
-        "parse_mode":               "Markdown",
-        "disable_web_page_preview": True,
-    }).encode()
-    req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    payload = json.dumps(
+        {
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": text,
+            "parse_mode": "Markdown",
+            "disable_web_page_preview": True,
+        }
+    ).encode()
+    req = urllib.request.Request(
+        url, data=payload, headers={"Content-Type": "application/json"}
+    )
     with urllib.request.urlopen(req, timeout=15) as resp:
         result = json.loads(resp.read())
     if result.get("ok"):
@@ -192,5 +194,17 @@ def send_telegram(text):
 
 
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Gold and silver morning alert")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Print instead of sending"
+    )
+    args = parser.parse_args()
+
     alert = build_alert()
-    send_telegram(alert)
+    if args.dry_run:
+        print(alert)
+        print("\n[DRY RUN] Telegram delivery skipped")
+    else:
+        send_telegram(alert)
