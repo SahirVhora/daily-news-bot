@@ -2,7 +2,6 @@ name: Daily News Digests
 
 on:
   schedule:
-    - cron: '0 6 * * *'   # WC26 Briefing
     - cron: '0 0 * * *'   # GitHub Triage
     - cron: '15 6 * * *'  # UK News
     - cron: '25 6 * * *'  # India News
@@ -25,7 +24,6 @@ on:
           - x_trends
           - top_news
           - ai_news
-          - wc26_briefing
           - github_triage_digest
           - github_health_digest
 
@@ -99,16 +97,6 @@ jobs:
     with:
       digest_name: 'Daily AI News'
       script_path: 'ai_news.py'
-    secrets:
-      telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
-      telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-
-  wc26_briefing:
-    if: (github.event_name == 'schedule' && github.event.schedule == '0 6 * * *') || (github.event_name == 'workflow_dispatch' && inputs.digest == 'wc26_briefing')
-    uses: ./.github/workflows/_run-digest.yml
-    with:
-      digest_name: 'WC26 Morning Briefing'
-      script_path: 'wc26_briefing.py'
     secrets:
       telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
