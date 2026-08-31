@@ -36,7 +36,7 @@ jobs:
     uses: ./.github/workflows/_run-digest.yml
     with:
       digest_name: 'Daily UK News'
-      script_path: 'uk_news.py'
+      digest_id: 'uk_news'
     secrets:
       telegram_bot_token: ${{ secrets.ACCIO_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -46,7 +46,7 @@ jobs:
     uses: ./.github/workflows/_run-digest.yml
     with:
       digest_name: 'Daily India News'
-      script_path: 'india_news.py'
+      digest_id: 'india_news'
     secrets:
       telegram_bot_token: ${{ secrets.ACCIO_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -56,7 +56,7 @@ jobs:
     uses: ./.github/workflows/_run-digest.yml
     with:
       digest_name: 'Daily SAP News'
-      script_path: 'sap_news.py'
+      digest_id: 'sap_news'
     secrets:
       telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -66,7 +66,7 @@ jobs:
     uses: ./.github/workflows/_run-digest.yml
     with:
       digest_name: 'Daily GitHub Trending'
-      script_path: 'github_trending.py'
+      digest_id: 'github_trending'
     secrets:
       telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -76,7 +76,7 @@ jobs:
     uses: ./.github/workflows/_run-digest.yml
     with:
       digest_name: 'Daily X/Twitter Trends'
-      script_path: 'x_trends.py'
+      digest_id: 'x_trends'
     secrets:
       telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -86,7 +86,7 @@ jobs:
     uses: ./.github/workflows/_run-digest.yml
     with:
       digest_name: 'Daily Top News'
-      script_path: 'top_news.py'
+      digest_id: 'top_news'
     secrets:
       telegram_bot_token: ${{ secrets.ACCIO_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -96,7 +96,7 @@ jobs:
     uses: ./.github/workflows/_run-digest.yml
     with:
       digest_name: 'Daily AI News'
-      script_path: 'ai_news.py'
+      digest_id: 'ai_news'
     secrets:
       telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -106,7 +106,7 @@ jobs:
     uses: ./.github/workflows/_run-digest.yml
     with:
       digest_name: 'Overnight GitHub Triage'
-      script_path: 'github_triage_digest.py'
+      digest_id: 'github_triage_digest'
     secrets:
       telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -117,7 +117,7 @@ jobs:
     uses: ./.github/workflows/_run-digest.yml
     with:
       digest_name: 'Weekly Repo Health Digest'
-      script_path: 'github_health_digest.py'
+      digest_id: 'github_health_digest'
     secrets:
       telegram_bot_token: ${{ secrets.ALWAYSNEWS_BOT_TOKEN }}
       telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
