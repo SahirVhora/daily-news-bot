@@ -6,17 +6,9 @@ on:
       digest_name:
         required: true
         type: string
-      script_path:
+      digest_id:
         required: true
         type: string
-      python_version:
-        required: false
-        type: string
-        default: "3.11"
-      install_command:
-        required: false
-        type: string
-        default: "pip install -r requirements.txt"
     secrets:
       telegram_bot_token:
         required: true
@@ -25,26 +17,56 @@ on:
       github_pat:
         required: false
 
+permissions:
+  contents: read
+
 jobs:
   run-digest:
     name: ${{ inputs.digest_name }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
-          python-version: ${{ inputs.python_version }}
+          python-version: "3.11"
           cache: pip
 
       - name: Install dependencies
-        run: ${{ inputs.install_command }}
+        run: python -m pip install -r requirements.txt
 
-      - name: Run digest script
+      - name: Run standard digest
+        if: inputs.digest_id != 'github_triage_digest' && inputs.digest_id != 'github_health_digest'
         env:
+          DIGEST_ID: ${{ inputs.digest_id }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.telegram_bot_token }}
+          TELEGRAM_CHAT_ID: ${{ secrets.telegram_chat_id }}
+        run: |
+          case "$DIGEST_ID" in
+            uk_news) script="uk_news.py" ;;
+            india_news) script="india_news.py" ;;
+            sap_news) script="sap_news.py" ;;
+            github_trending) script="github_trending.py" ;;
+            x_trends) script="x_trends.py" ;;
+            top_news) script="top_news.py" ;;
+            ai_news) script="ai_news.py" ;;
+            *) echo "Unsupported digest: $DIGEST_ID"; exit 2 ;;
+          esac
+          python "$script"
+
+      - name: Run GitHub digest
+        if: inputs.digest_id == 'github_triage_digest' || inputs.digest_id == 'github_health_digest'
+        env:
+          DIGEST_ID: ${{ inputs.digest_id }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.telegram_bot_token }}
           TELEGRAM_CHAT_ID: ${{ secrets.telegram_chat_id }}
           GH_TOKEN: ${{ secrets.github_pat || github.token }}
-        run: python ${{ inputs.script_path }}
+        run: |
+          case "$DIGEST_ID" in
+            github_triage_digest) script="github_triage_digest.py" ;;
+            github_health_digest) script="github_health_digest.py" ;;
+            *) echo "Unsupported GitHub digest: $DIGEST_ID"; exit 2 ;;
+          esac
+          python "$script"
